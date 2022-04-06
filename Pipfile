@@ -12,8 +12,20 @@ name = "downloadpytorch"
 torch = "*"
 torchvision = "*"
 torchaudio = "*"
+numpy = "*"
+pandas = "*"
+tqdm = "*"
+scipy = "*"
+scikit-learn = "*"
+pillow = "*"
+matplotlib = "*"
+jupyter = "*"
 
 [dev-packages]
+flake8 = "*"
+black = "*"
+isort = "*"
+mypy = "*"
 
 [requires]
 python_version = "3.7"
