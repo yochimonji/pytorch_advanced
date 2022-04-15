@@ -85,3 +85,22 @@ class Discriminator(nn.Module):
         out = self.layer4(out)
         out = self.last(out)
         return cast(Tensor, out)
+
+
+def weights_init(
+    m,
+    *,
+    conv_weight_mean=0.0,
+    conv_weight_std=0.02,
+    conv_bias=0.0,
+    batchnorm_weight_mean=1.0,
+    batchnorm_weight_std=0.02,
+    batchnorm_bias=0.0,
+):
+    classname = m.__class__.__name__
+    if classname.find("Conv") != -1:
+        nn.init.normal_(m.weight.data, conv_weight_mean, conv_weight_std)
+        nn.init.constant_(m.bias.data, conv_bias)
+    elif classname.find("BatchNorm") != -1:
+        nn.init.normal_(m.weight.data, batchnorm_weight_mean, batchnorm_weight_std)
+        nn.init.constant_(m.bias.data, batchnorm_bias)
