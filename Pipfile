@@ -8,10 +8,17 @@ url = "https://download.pytorch.org/whl/cu113"
 verify_ssl = true
 name = "downloadpytorch"
 
+[[source]]
+url = "https://download.pytorch.org/whl/cu113"
+verify_ssl = true
+name = "downloadpytorch"
+
+[[source]]
+url = "https://download.pytorch.org/whl/cu113"
+verify_ssl = true
+name = "downloadpytorch"
+
 [packages]
-torch = "*"
-torchvision = "*"
-torchaudio = "*"
 numpy = "*"
 pandas = "*"
 tqdm = "*"
@@ -20,12 +27,18 @@ scikit-learn = "*"
 pillow = "*"
 matplotlib = "*"
 jupyter = "*"
+seaborn = "*"
+torch = "*"
+torchvision = "*"
+torchaudio = "*"
 
 [dev-packages]
 flake8 = "*"
 black = "*"
 isort = "*"
 mypy = "*"
+pytest = "*"
+pytest-cov = "*"
 
 [requires]
-python_version = "3.7"
+python_version = "3.10"
