@@ -1,7 +1,14 @@
 from typing import cast
+from zlib import Z_BEST_COMPRESSION
 
 import torch
-from pytorch_advanced.gan_generation.util.model import Discriminator, Generator, weights_init
+from pytorch_advanced.gan_generation.util.model import (
+    Discriminator,
+    Generator,
+    SAGANGenerator,
+    SelfAttention,
+    weights_init,
+)
 
 
 def test_generator():
@@ -45,3 +52,28 @@ def test_weights_init_batchnorm():
     assert torch.mean(batchnorm.weight.data).round(decimals=1) == torch.tensor(0.0)
     assert torch.std(batchnorm.weight.data).round(decimals=2) == torch.tensor(0.02)
     assert torch.equal(batchnorm.bias.data, torch.full_like(batchnorm.bias.data, batchnorm_bias))
+
+
+def test_self_attention():
+    batch_size = 4
+    in_dim = 64  # in_channels
+    image_size = 32
+
+    self_attention = SelfAttention(in_dim)
+    input_tensor = torch.rand(4, in_dim, image_size, image_size)
+    out, attention_map = self_attention(input_tensor)
+    assert out.size() == input_tensor.size()
+    assert attention_map.size() == torch.Size([batch_size, image_size**2, image_size**2])
+
+
+def test_sagan_generator():
+    batch_size = 64
+    z_dim = 20
+    image_size = 64
+
+    g = SAGANGenerator(z_dim, image_size)
+    input_tensor = torch.rand(batch_size, z_dim, 1, 1)
+    out, map_1, map_2 = g(input_tensor)
+    assert out.size() == torch.Size([batch_size, 1, image_size, image_size])
+    assert map_1.size() == torch.Size([batch_size, (image_size // 4) ** 2, (image_size // 4) ** 2])
+    assert map_2.size() == torch.Size([batch_size, (image_size // 2) ** 2, (image_size // 2) ** 2])
