@@ -5,7 +5,7 @@ from torch import Tensor, nn
 from torch.nn.utils import spectral_norm
 
 
-class Generator(nn.Module):
+class DCGANGenerator(nn.Module):
     layer1: nn.Sequential
     layer2: nn.Sequential
     layer3: nn.Sequential
@@ -52,7 +52,7 @@ class Generator(nn.Module):
         return cast(Tensor, out)
 
 
-class Discriminator(nn.Module):
+class DCGANDiscriminator(nn.Module):
     layer1: nn.Sequential
     layer2: nn.Sequential
     layer3: nn.Sequential

@@ -4,8 +4,8 @@ from torch import cuda, nn
 from torch.utils.data import DataLoader
 
 from util.dataloader import GANImageDataset, ImageTransform, make_datapath_list
-from util.model import Discriminator, Generator, weights_init
-from util.train import train_model
+from util.model import DCGANDiscriminator, DCGANGenerator, weights_init
+from util.train import train_dcgan
 
 
 def main():
@@ -13,7 +13,7 @@ def main():
     std = (0.5,)
     batch_size = 64
     z_dim = 20
-    epochs = 200
+    epochs = 2
     torch.backends.cudnn.benchmark = True
 
     train_img_list = make_datapath_list("pytorch_advanced/gan_generation/data/img_78/")
@@ -21,8 +21,8 @@ def main():
     train_dataset = GANImageDataset(train_img_list, transform)
     train_dataloader = DataLoader(train_dataset, batch_size, shuffle=True, num_workers=2, pin_memory=True)
 
-    generator = Generator(z_dim=20, image_size=64)
-    discriminator = Discriminator(image_size=64)
+    generator = DCGANGenerator(z_dim=20, image_size=64)
+    discriminator = DCGANDiscriminator(image_size=64)
     generator.apply(weights_init)
     discriminator.apply(weights_init)
     print("ネットワーク初期化完了")
@@ -36,7 +36,7 @@ def main():
     d_optimizer = torch.optim.Adam(discriminator.parameters(), d_lr, betas=(beta1, beta2))
     criterion = nn.BCEWithLogitsLoss()
 
-    g, d = train_model(
+    g, d = train_dcgan(
         generator, discriminator, train_dataloader, g_optimizer, d_optimizer, criterion, z_dim, epochs, device=device
     )
 
