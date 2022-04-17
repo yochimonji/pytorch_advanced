@@ -1,10 +1,10 @@
 from typing import cast
-from zlib import Z_BEST_COMPRESSION
 
 import torch
 from pytorch_advanced.gan_generation.util.model import (
     Discriminator,
     Generator,
+    SAGANDiscriminator,
     SAGANGenerator,
     SelfAttention,
     weights_init,
@@ -77,3 +77,15 @@ def test_sagan_generator():
     assert out.size() == torch.Size([batch_size, 1, image_size, image_size])
     assert map_1.size() == torch.Size([batch_size, (image_size // 4) ** 2, (image_size // 4) ** 2])
     assert map_2.size() == torch.Size([batch_size, (image_size // 2) ** 2, (image_size // 2) ** 2])
+
+
+def test_sagan_discriminator():
+    batch_size = 64
+    image_size = 64
+
+    d = SAGANDiscriminator(image_size)
+    input_tensor = torch.rand(batch_size, 1, image_size, image_size)
+    out, map1, map2 = d(input_tensor)
+    assert out.size() == torch.Size([batch_size, 1, 1, 1])
+    assert map1.size() == torch.Size([batch_size, (image_size // 8) ** 2, (image_size // 8) ** 2])
+    assert map2.size() == torch.Size([batch_size, (image_size // 16) ** 2, (image_size // 16) ** 2])

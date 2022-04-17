@@ -174,3 +174,31 @@ class SAGANGenerator(nn.Module):
         out, attention_map_2 = self.self_attention_2(out)
         out = self.last(out)
         return out, attention_map_1, attention_map_2
+
+
+class SAGANDiscriminator(nn.Module):
+    def __init__(self, image_size: int = 64):
+        super().__init__()
+        self.layer1 = nn.Sequential(spectral_norm(nn.Conv2d(1, image_size, 4, 2, 1)), nn.LeakyReLU(0.1, True))
+        self.layer2 = nn.Sequential(
+            spectral_norm(nn.Conv2d(image_size, image_size * 2, 4, 2, 1)), nn.LeakyReLU(0.1, True)
+        )
+        self.layer3 = nn.Sequential(
+            spectral_norm(nn.Conv2d(image_size * 2, image_size * 4, 4, 2, 1)), nn.LeakyReLU(0.1, True)
+        )
+        self.self_attention_1 = SelfAttention(image_size * 4)
+        self.layer4 = nn.Sequential(
+            spectral_norm(nn.Conv2d(image_size * 4, image_size * 8, 4, 2, 1)), nn.LeakyReLU(0.1, True)
+        )
+        self.self_attention_2 = SelfAttention(image_size * 8)
+        self.last = nn.Conv2d(image_size * 8, 1, 4, 1)
+
+    def forward(self, x):
+        out = self.layer1(x)
+        out = self.layer2(out)
+        out = self.layer3(out)
+        out, attention_map_1 = self.self_attention_1(out)
+        out = self.layer4(out)
+        out, attention_map_2 = self.self_attention_2(out)
+        out = self.last(out)
+        return out, attention_map_1, attention_map_2
